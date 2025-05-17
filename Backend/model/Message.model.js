@@ -1,38 +1,28 @@
 // models/Message.js
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const messageSchema = new mongoose.Schema({
-  sender: {
+  senderId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },
-  receiver: {
+  receiverId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },
-  messageType: {
-    type: String,
-    enum: ["text", "image", "audio"],
-    default: "text",
-  },
+
   content: {
     type: String,
     required: true,
   },
-  language: {
-    type: String, // e.g., 'Kannada', 'Hindi'
+  courseId: {
+    type: String,
+    ref:"Courses",
     required: true,
   },
-  isTranslated: {
-    type: Boolean,
-    default: false,
-  },
-  translatedContent: {
-    type: String,
-    default: "",
-  },
+
   createdAt: {
     type: Date,
     default: Date.now,
@@ -41,13 +31,7 @@ const messageSchema = new mongoose.Schema({
 
 // 🔄 Pre-save middleware for translation (mock)
 messageSchema.pre("save", async function (next) {
-  const message = this;
-
-  if (message.messageType === "text" && !message.isTranslated) {
-    // Simulated translation (in production, call external translation API here)
-    message.translatedContent = `Translated(${message.language}): ${message.content}`;
-    message.isTranslated = true;
-  }
+  //check for profinity
 
   next();
 });
